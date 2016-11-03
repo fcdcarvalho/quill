@@ -12,6 +12,7 @@ import { BackgroundClass, BackgroundStyle } from './formats/background';
 import { ColorClass, ColorStyle } from './formats/color';
 import { FontClass, FontStyle } from './formats/font';
 import { SizeClass, SizeStyle } from './formats/size';
+import { SizeStylePt } from './formats/size-pt';
 
 import Bold from './formats/bold';
 import Italic from './formats/italic';
@@ -54,7 +55,8 @@ Quill.register({
   'attributors/style/color': ColorStyle,
   'attributors/style/direction': DirectionStyle,
   'attributors/style/font': FontStyle,
-  'attributors/style/size': SizeStyle
+  'attributors/style/size': SizeStyle,
+  'attributors/style/size-pt': SizeStylePt
 }, true);
 
 
@@ -67,6 +69,7 @@ Quill.register({
   'formats/color': ColorStyle,
   'formats/font': FontClass,
   'formats/size': SizeClass,
+  'formats/size-pt': SizeStylePt,
 
   'formats/blockquote': Blockquote,
   'formats/code-block': CodeBlock,

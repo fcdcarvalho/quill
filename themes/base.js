@@ -26,6 +26,8 @@ const HEADERS = [ '1', '2', '3', false ];
 
 const SIZES = [ 'small', false, 'large', 'huge' ];
 
+const SIZES_PT = [false, '10pt', '12pt', '14pt', '18pt', '24pt'];
+
 
 class BaseTheme extends Theme {
   constructor(quill, options) {
@@ -99,6 +101,8 @@ class BaseTheme extends Theme {
             fillSelect(select, HEADERS);
           } else if (select.classList.contains('ql-size')) {
             fillSelect(select, SIZES);
+          } else if (select.classList.contains('ql-size-pt')) {
+            fillSelect(select, SIZES_PT);
           }
         }
         return new Picker(select);
