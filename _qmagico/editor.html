@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="../dist/quill.snow.css">
+<link rel="stylesheet" type="text/css" href="image-popup.css"> <!--temporary-->
 <script type="text/javascript" src="../dist/quill.js"></script>
 <div id="quill"></div>
 
@@ -7,7 +8,7 @@
 var quill = new Quill ("#quill",{
 	theme: "snow",
 	modules: {
-		toolbar:[['bold', {'size':[]}, {'size-pt':[]}]]
+		toolbar:[['bold', 'image', {'size-pt':[]}]]
 	}
 });
 	

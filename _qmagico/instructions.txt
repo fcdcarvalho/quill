@@ -1,0 +1,10 @@
+HOW TO DEPLOY QUILLJS
+---------------------
+
+1. install node version 6.9.1 (or later) and npm version 3.10.8 (or later).
+
+2. run "npm install" to install the dependecies of the project with npm.
+
+3. run "npm run build" to deploy quill. the built files will appear in the "/dist" folder.
+
+4. open "/_qmagico/editor.html" for a demo of the developed features.

@@ -35,6 +35,7 @@ import Picker from './ui/picker';
 import ColorPicker from './ui/color-picker';
 import IconPicker from './ui/icon-picker';
 import Tooltip from './ui/tooltip';
+import ImagePopup from './ui/image-popup';
 
 import BubbleTheme from './themes/bubble';
 import SnowTheme from './themes/snow';
@@ -100,7 +101,8 @@ Quill.register({
   'ui/picker': Picker,
   'ui/icon-picker': IconPicker,
   'ui/color-picker': ColorPicker,
-  'ui/tooltip': Tooltip
+  'ui/tooltip': Tooltip,
+  'ui/image-popup': ImagePopup
 }, true);
 
 
