@@ -46,6 +46,11 @@ SnowTheme.DEFAULTS = extend(true, {}, BaseTheme.DEFAULTS, {
             if (/^\S+@\S+\.\S+$/.test(preview) && preview.indexOf('mailto:') !== 0) {
               preview = 'mailto:' + preview;
             }
+            if ((/^\S+\.\S{2,3}\b$/).test(preview) && preview.indexOf('http://') !== 0
+              && preview.indexOf('https://') !== 0){
+              preview = 'http://' + preview;
+            }
+            
             let tooltip = this.quill.theme.tooltip;
             tooltip.edit('link', preview);
           } else {

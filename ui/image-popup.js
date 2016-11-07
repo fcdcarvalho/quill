@@ -2,16 +2,20 @@ class ImagePopup {
 	constructor(quill){
 		this.quill = quill;
 
+		var divPopup = document.createElement("div");
+		divPopup.className = "ql-popup";
+		this.divPopup = divPopup;
+
 		var divOverlay = document.createElement("div");
-		divOverlay.className = "overlay";
-		this.divOverlay = divOverlay;
+		divOverlay.className = "ql-overlay";
+		divPopup.appendChild(divOverlay);
 
 		var divWindow = document.createElement("div");
-		divWindow.className = "window";
+		divWindow.className = "ql-window";
 		divOverlay.appendChild(divWindow);
 
 		var btnClose = document.createElement("div");
-		btnClose.className = "close";
+		btnClose.className = "ql-close";
 		btnClose.innerHTML = "&times;";
 		btnClose.onclick = () => {
 			this.hide();
@@ -19,7 +23,7 @@ class ImagePopup {
 		divWindow.appendChild(btnClose);
 
 		var divHeader = document.createElement("div");
-		divHeader.className = "header";
+		divHeader.className = "ql-header";
 		divHeader.innerHTML = "Inserir Imagem";
 		divWindow.appendChild(divHeader);
 
@@ -27,7 +31,7 @@ class ImagePopup {
 		divWindow.appendChild(form);
 
 		var divSectionUrl = document.createElement("div");
-		divSectionUrl.className = "section";
+		divSectionUrl.className = "ql-section";
 		form.appendChild(divSectionUrl);
 
 		var labelUrl = document.createElement("label");
@@ -52,7 +56,7 @@ class ImagePopup {
 		this.txtURL = txtURL;
 		
 		var divSectionFile = document.createElement("div");
-		divSectionFile.className = "section";
+		divSectionFile.className = "ql-section";
 		form.appendChild(divSectionFile);
 
 		var labelFile = document.createElement("label");
@@ -77,7 +81,7 @@ class ImagePopup {
 		divSectionFile.appendChild(inputFile);
 
 		var divSectionButton = document.createElement("div");
-		divSectionButton.className = "section center";
+		divSectionButton.className = "ql-section ql-center";
 		form.appendChild(divSectionButton);
 		
 		var btnInsert = document.createElement("button");
@@ -110,11 +114,11 @@ class ImagePopup {
         }
     }
     show(){
-    	document.body.appendChild(this.divOverlay);
+    	document.body.appendChild(this.divPopup);
 		this.txtURL.focus();
     }
     hide(){
-    	document.body.removeChild(this.divOverlay);
+    	document.body.removeChild(this.divPopup);
     }
 }
 export default ImagePopup;
