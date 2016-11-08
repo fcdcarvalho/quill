@@ -7,8 +7,27 @@
 var quill = new Quill ("#quill",{
 	theme: "snow",
 	modules: {
-		toolbar:[['link', 'bold', 'image', {'size-pt':[]}]]
-	}
+		toolbar:[
+		
+		['bold', 'italic', 'underline'],
+
+		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+
+		[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+
+		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+		  
+		[{'size-pt':[]}], // custom dropdown
+
+		[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+
+		[{ 'align': [] }],
+
+		['link', "image", 'video', 'formula'],
+
+		['clean']]
+
+		}
 });
 	
 
