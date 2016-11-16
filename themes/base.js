@@ -1,5 +1,5 @@
 import extend from 'extend';
-import Delta from 'rich-text/lib/delta';
+import Delta from 'quill-delta';
 import Emitter from '../core/emitter';
 import Keyboard from '../modules/keyboard';
 import Theme from '../core/theme';
@@ -14,7 +14,7 @@ import icons from '../ui/icons';
 const ALIGNS = [ false, 'center', 'right', 'justify' ];
 
 const COLORS = [
-  "#000000", "#e60000", "#ff9900", "#ffff00", "#008A00", "#0066cc", "#9933ff",
+  "#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff",
   "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff",
   "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff",
   "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2",
@@ -60,7 +60,7 @@ class BaseTheme extends Theme {
     return module;
   }
 
-  buildButtons(buttons) {
+  buildButtons(buttons, icons) {
     buttons.forEach((button) => {
       let className = button.getAttribute('class') || '';
       className.split(/\s+/).forEach((name) => {
@@ -81,7 +81,7 @@ class BaseTheme extends Theme {
     });
   }
 
-  buildPickers(selects) {
+  buildPickers(selects, icons) {
     this.pickers = selects.map((select) => {
       if (select.classList.contains('ql-align')) {
         if (select.querySelector('option') == null) {
@@ -122,13 +122,13 @@ BaseTheme.DEFAULTS = extend(true, {}, Theme.DEFAULTS, {
   modules: {
     toolbar: {
       handlers: {
-        formula: function(value) {
+        formula: function() {
           this.quill.theme.tooltip.edit('formula');
         },
         image: function(value) {
           var imagePopup = new ImagePopup(this.quill);
         },
-        video: function(value) {
+        video: function() {
           this.quill.theme.tooltip.edit('video');
         }
       }
@@ -183,7 +183,7 @@ class BaseTooltip extends Tooltip {
   save() {
     let value = this.textbox.value;
     switch(this.root.getAttribute('data-mode')) {
-      case 'link':
+      case 'link': {
         let scrollTop = this.quill.root.scrollTop;
         if (this.linkRange) {
           this.quill.formatText(this.linkRange, 'link', value, Emitter.sources.USER);
@@ -194,16 +194,17 @@ class BaseTooltip extends Tooltip {
         }
         this.quill.root.scrollTop = scrollTop;
         break;
-      case 'video':
+      }
+      case 'video': {
         let match = value.match(/^(https?):\/\/(www\.)?youtube\.com\/watch.*v=([a-zA-Z0-9_-]+)/) ||
                     value.match(/^(https?):\/\/(www\.)?youtu\.be\/([a-zA-Z0-9_-]+)/);
         if (match) {
           value = match[1] + '://www.youtube.com/embed/' + match[3] + '?showinfo=0';
-        } else if (match = value.match(/^(https?):\/\/(www\.)?vimeo\.com\/(\d+)/)) {
+        } else if (match = value.match(/^(https?):\/\/(www\.)?vimeo\.com\/(\d+)/)) {  // eslint-disable-line no-cond-assign
           value = match[1] + '://player.vimeo.com/video/' + match[3] + '/';
         }
-        // fallthrough
-      case 'formula':
+      } // eslint-disable-next-line no-fallthrough
+      case 'formula': {
         let range = this.quill.getSelection(true);
         let index = range.index + range.length;
         if (range != null) {
@@ -214,6 +215,7 @@ class BaseTooltip extends Tooltip {
           this.quill.setSelection(index + 2, Emitter.sources.USER);
         }
         break;
+      }
       default:
     }
     this.textbox.value = '';
