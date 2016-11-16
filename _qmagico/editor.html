@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="../dist/quill.snow.css">
 <script type="text/javascript" src="../dist/quill.js"></script>
-<script type="text/javascript" src="md5.js"></script>
+
 <div id="quill"></div>
 
 <script>
@@ -9,78 +9,18 @@ var quill = new Quill ("#quill",{
 	theme: "snow",
 	modules: {
 		toolbar:[
-		
-		['bold', 'italic', 'underline'],
-
-		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-
-		[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-
-		[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-		  
-		[{'size-pt':[]}], // custom dropdown
-
-		[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-
-		[{ 'align': [] }],
-
-		['link', "image", 'video', 'formula'],
-
-		['clean']]
-
-		}
+			['bold', 'italic', 'underline'],
+			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+			[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+			[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+			[{'size-pt':[]}], // custom dropdown
+			[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+			[{ 'align': [] }],
+			['link', "image", 'video', 'formula'],
+			['clean']
+		],
+		"image-upload": {}
+	}
 });
 
-function post(url, params, success_callback, failure_callback){
-	var params_array = [];
-	for (var key in params){
-		params_array.push(key + "=" + encodeURIComponent(params[key]));
-
-	}
-	params = params_array.join("&");
-
-	var http = new XMLHttpRequest();
-	http.open("POST", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	http.onreadystatechange = function() {
-		if (http.readyState == 4){
-			if (http.status == 200){
-				success_callback(JSON.parse(http.responseText));
-			} else {
-				failure_callback(http.responseText);
-			}
-		}
-	}
-	http.send(params);
-}
-function uploadImage(image_file, url_callback){
-	var key = prompt("upload key");
-	var name = image_file.name;
-
-	var fileReader = new FileReader();
-	fileReader.onload = function(e){
-		var base64 = e.target.result;
-		base64 = base64.replace(/^data:image\/\w+;base64,/, "");
-		var md5 = MD5.hash(base64);
-
-		post("http://victorbreder.com/qmagico/upload.php", {key: key, name: name, md5: md5, base64: base64}, function(res){
-			if (res.error == null){
-				url_callback(res.data.url);
-			} else {
-				alert(res.message);
-			}
-		});
-	};
-	fileReader.readAsDataURL(image_file);
-}
-
-function btnUploadClick(){
-	var fileSelect = document.getElementById("fileSelect");
-	uploadImage(fileSelect.files[0], function(url){
-		quill.insertEmbed(0, "image", url);
-	});
-}
-
 </script>
-<input type="file" id="fileSelect">
-<button onclick="btnUploadClick()">upload</button>

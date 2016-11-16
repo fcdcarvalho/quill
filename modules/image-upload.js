@@ -1,3 +1,65 @@
+import Quill from '../core/quill';
+import Module from '../core/module';
+
+const UPLOAD_API_URL = "http://victorbreder.com/qmagico/upload.php";
+
+class ImageUpload extends Module {
+	constructor (quill, options){
+		super(quill, options);
+	}
+	upload (image_input){
+		uploadImage(image_input, (url) => {
+			var selection = this.quill.getSelection (true);
+			this.quill.insertEmbed(selection.index, "image", url);
+		});
+	}
+}
+
+function post(url, params, success_callback, failure_callback){
+	var params_array = [];
+	for (var key in params){
+		params_array.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
+	}
+	params = params_array.join("&");
+
+	var http = new XMLHttpRequest();
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4){
+			if (http.status == 200){
+				success_callback(JSON.parse(http.responseText));
+			} else {
+				console.log("POST ERROR: " + url)
+				failure_callback(http.responseText);
+			}
+		}
+	}
+	http.send(params);
+}
+
+function uploadImage(image_input, url_callback){
+	var key = prompt("upload key"); // TODO insert server upload key
+	var image_file = image_input.files[0];
+	var name = image_file.name;
+
+	var fileReader = new FileReader();
+	fileReader.onload = function(e){
+		var base64 = e.target.result;
+		base64 = base64.replace(/^data:image\/\w+;base64,/, "");
+		var md5 = MD5.hash(base64);
+
+		post(UPLOAD_API_URL, {key: key, name: name, md5: md5, base64: base64}, function(res){
+			if (res.error == null){
+				url_callback(res.data.url);
+			} else {
+				alert(res.message);
+			}
+		});
+	};
+	fileReader.readAsDataURL(image_file);
+}
+
 var MD5 = (function() {
 	function md5cycle(x, k) {
 		var a = x[0], b = x[1], c = x[2], d = x[3];
@@ -97,7 +159,7 @@ var MD5 = (function() {
 	function ii(a, b, c, d, x, s, t) {
 		return cmn(c ^ (b | (~d)), a, b, x, s, t);
 	}
-
+	var txt;
 	function md51(s) {
 		txt = '';
 		var n = s.length,
@@ -183,3 +245,5 @@ var MD5 = (function() {
 		}
 	}
 })();
+
+export default ImageUpload;

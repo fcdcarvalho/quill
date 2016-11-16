@@ -29,6 +29,7 @@ import CodeBlock, { Code as InlineCode } from './formats/code';
 import Formula from './modules/formula';
 import Syntax from './modules/syntax';
 import Toolbar from './modules/toolbar';
+import ImageUpload from './modules/image-upload';
 
 import Icons from './ui/icons';
 import Picker from './ui/picker';
@@ -93,6 +94,7 @@ Quill.register({
   'modules/formula': Formula,
   'modules/syntax': Syntax,
   'modules/toolbar': Toolbar,
+  'modules/image-upload': ImageUpload,
 
   'themes/bubble': BubbleTheme,
   'themes/snow': SnowTheme,

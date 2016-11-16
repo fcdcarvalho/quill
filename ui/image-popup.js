@@ -89,9 +89,9 @@ class ImagePopup {
 		btnInsert.onclick = (e) => {
 			e.preventDefault();
 			if (rdURL.checked){
-				this.addFromURL(quill, txtURL.value);
+				this.addFromURL(txtURL.value);
 			} else {
-				this.addFromFile(quill, inputFile);
+				this.addFromFile(inputFile);
 			}
 			this.hide();
 		};
@@ -99,19 +99,15 @@ class ImagePopup {
 
 		this.show();
 	}
-	addFromURL(quill, url){
-		var selection = quill.getSelection(true);
-		quill.insertEmbed(selection.index, 'image', url);
+	addFromURL(url){
+		var selection = this.quill.getSelection(true);
+		this.quill.insertEmbed(selection.index, 'image', url);
 	}
-	addFromFile(quill, inputFile){
+	addFromFile(inputFile){
 		if (inputFile.files != null && inputFile.files[0] != null) {
-            let reader = new FileReader();
-            reader.onload = (e) => {
-            	this.addFromURL(quill, e.target.result);
-            	//TODO implement upload code
-        	}
-            reader.readAsDataURL(inputFile.files[0]);
-        }
+			var ImageUpload = this.quill.getModule("image-upload");
+			ImageUpload.upload(inputFile);
+    	}
     }
     show(){
     	document.body.appendChild(this.divPopup);
