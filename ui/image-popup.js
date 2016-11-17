@@ -28,6 +28,7 @@ class ImagePopup {
 		divWindow.appendChild(divHeader);
 
 		var form = document.createElement("form");
+		this.form = form;
 		divWindow.appendChild(form);
 
 		var divSectionUrl = document.createElement("div");
@@ -93,20 +94,44 @@ class ImagePopup {
 			} else {
 				this.addFromFile(inputFile);
 			}
-			this.hide();
 		};
 		divSectionButton.appendChild(btnInsert);
+
+		var progressSection = document.createElement("div");
+		progressSection.className = "ql-section ql-hidden";
+		this.progressSection = progressSection;
+		divWindow.appendChild(progressSection);
+
+		var progressBarContainer = document.createElement("div");
+		progressBarContainer.className = "ql-progress-bar-container";
+		progressSection.appendChild(progressBarContainer);
+
+		var progressBar = document.createElement("div");
+		progressBar.className = "ql-progress-bar";
+		this.progressBar = progressBar;
+		progressBarContainer.appendChild(progressBar);
 
 		this.show();
 	}
 	addFromURL(url){
 		var selection = this.quill.getSelection(true);
 		this.quill.insertEmbed(selection.index, 'image', url);
+		this.hide();
 	}
 	addFromFile(inputFile){
 		if (inputFile.files != null && inputFile.files[0] != null) {
+			this.form.style.display = "none";
+			this.progressSection.style.display = "block";
+
 			var ImageUpload = this.quill.getModule("image-upload");
-			ImageUpload.upload(inputFile);
+			ImageUpload.upload(inputFile, (error) => {
+				if (error){
+					alert(error);
+				}
+				this.hide();
+			}, (progress) => {
+				this.progressBar.textContent = Math.round(progress * 100) + "%";
+			});
     	}
     }
     show(){

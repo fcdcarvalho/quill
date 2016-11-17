@@ -4,18 +4,49 @@ import Module from '../core/module';
 const UPLOAD_API_URL = "http://victorbreder.com/qmagico/upload.php";
 
 class ImageUpload extends Module {
-	constructor (quill, options){
+	constructor(quill, options){
 		super(quill, options);
 	}
-	upload (image_input){
-		uploadImage(image_input, (url) => {
-			var selection = this.quill.getSelection (true);
-			this.quill.insertEmbed(selection.index, "image", url);
-		});
+	upload(image_input, done_callback, progress_callback){
+		var key = prompt("upload key"); // TODO insert server upload key
+		var image_file = image_input.files[0]; 
+		var name = image_file.name;
+
+		var fileReader = new FileReader();
+		fileReader.onload = (e) => {
+			var base64 = e.target.result;
+			base64 = base64.replace(/^data:image\/\w+;base64,/, "");
+			var md5 = MD5.hash(base64);
+
+			post(UPLOAD_API_URL, {key: key, name: name, md5: md5, base64: base64}, (res) => {
+				if (res.error == null){
+					var selection = this.quill.getSelection(true);
+					this.quill.insertEmbed(selection.index, "image", res.data.url);
+					if (done_callback){
+						done_callback();
+					}
+				} else {
+					if (done_callback){
+						done_callback("Error on media upload: " + res.message);
+					}
+				}
+				
+			}, function(){
+				if (done_callback){
+					done_callback("Error on media upload");
+				}
+			}, function(percent){
+				if (progress_callback){
+					progress_callback(percent);
+				}
+			});
+		};
+		fileReader.readAsDataURL(image_file);
+
 	}
 }
 
-function post(url, params, success_callback, failure_callback){
+function post(url, params, success_callback, failure_callback, progress_callback){
 	var params_array = [];
 	for (var key in params){
 		params_array.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
@@ -35,29 +66,13 @@ function post(url, params, success_callback, failure_callback){
 			}
 		}
 	}
+	http.upload.onprogress = function(e){
+		if (e.lengthComputable && progress_callback){
+			var percent = e.loaded/e.total;
+			progress_callback(percent);
+		}
+	}
 	http.send(params);
-}
-
-function uploadImage(image_input, url_callback){
-	var key = prompt("upload key"); // TODO insert server upload key
-	var image_file = image_input.files[0];
-	var name = image_file.name;
-
-	var fileReader = new FileReader();
-	fileReader.onload = function(e){
-		var base64 = e.target.result;
-		base64 = base64.replace(/^data:image\/\w+;base64,/, "");
-		var md5 = MD5.hash(base64);
-
-		post(UPLOAD_API_URL, {key: key, name: name, md5: md5, base64: base64}, function(res){
-			if (res.error == null){
-				url_callback(res.data.url);
-			} else {
-				alert(res.message);
-			}
-		});
-	};
-	fileReader.readAsDataURL(image_file);
 }
 
 var MD5 = (function() {
