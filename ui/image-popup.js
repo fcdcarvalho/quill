@@ -130,8 +130,10 @@ class ImagePopup {
 				}
 				this.hide();
 			}, (progress) => {
-				this.progressBar.textContent = Math.round(progress * 100) + "%";
+				this.progressBar.style.width = progress * 100 + "%";
+				this.progressBar.innerHTML = Math.round(progress * 100) + "%";
 			});
+			this.progressBar.innerHTML = "0%";
     	}
     }
     show(){
