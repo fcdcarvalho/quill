@@ -15,32 +15,7 @@ class Image extends Embed {
       node.setAttribute('src', this.sanitize(value));
     }
 
-    var resizing = false, startX, startY, startWidth, startHeight, ratio;
-    node.onmousedown = (e) => {
-      e.preventDefault();
-      resizing = true;
-      startX = e.offsetX;
-      startY = e.offsetY;
-      startWidth = node.offsetWidth;
-      startHeight = node.offsetHeight;
-      ratio = startWidth / startHeight;
-    };
-    node.onmouseup = (e) => {
-      resizing = false;
-    };
-    node.onmousemove  = (e) => {
-      if (resizing) {
-        var deltaX = e.offsetX - startX;
-        var deltaY = e.offsetY - startY;
-        var deltaWidth = deltaX + deltaY * ratio;
-        node.setAttribute('width', Math.max(startWidth + deltaWidth, 100));
-      }
-    };
-    node.onmouseleave = (e) => {
-      resizing = false;
-    };
-
-    return node;
+   return node;
   }
 
   static formats(domNode) {

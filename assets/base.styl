@@ -373,3 +373,41 @@ colorItemsPerRow = 7
       transition-duration: 1s
       box-sizing: border-box
 
+.ql-image-resizer
+  position: absolute
+  pointer-events: none
+
+  .ql-controls-container
+    position: relative
+    height: 100%
+    pointer-events: none
+
+    .ql-control
+      position: absolute
+      background-color: #FFF
+      border: 1px solid #000
+      width: 8px
+      height: 8px
+      pointer-events: auto
+
+    .ql-top-left
+      top: 0
+      left: 0
+      cursor: nw-resize
+
+    .ql-top-right
+      top: 0
+      right: 0
+      cursor: ne-resize
+
+    .ql-bottom-left
+      bottom: 0
+      left: 0
+      cursor: sw-resize
+
+    .ql-bottom-right
+      bottom: 0
+      right: 0
+      cursor: se-resize
+
+

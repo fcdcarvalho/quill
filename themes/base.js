@@ -8,6 +8,7 @@ import IconPicker from '../ui/icon-picker';
 import Picker from '../ui/picker';
 import Tooltip from '../ui/tooltip';
 import ImagePopup from '../ui/image-popup';
+import ImageResizer from '../ui/image-resizer';
 import icons from '../ui/icons';
 
 
@@ -33,6 +34,9 @@ const SIZES_PT = [false, '10pt', '12pt', '14pt', '18pt', '24pt'];
 class BaseTheme extends Theme {
   constructor(quill, options) {
     super(quill, options);
+
+    this.imageResizer = new ImageResizer(quill);
+
     let listener = (e) => {
       if (!document.body.contains(quill.root)) {
         return document.body.removeEventListener('click', listener);
@@ -48,8 +52,24 @@ class BaseTheme extends Theme {
           }
         });
       }
+      if (this.imageResizer != null) {
+        if (e.target.tagName == "IMG" && quill.root.contains(e.target)) {
+          this.imageResizer.controlImage(e.target);
+        } else if (!this.imageResizer.root.contains(e.target)) {
+          this.imageResizer.hide();
+        }
+      }
     };
     document.body.addEventListener('click', listener);
+    quill.on("text-change", () => {
+      if (this.imageResizer && this.imageResizer.active) {
+        if (quill.root.contains(this.imageResizer.image)){
+          this.imageResizer.updatePosition();
+        } else {
+          this.imageResizer.hide();
+        }
+      }
+    });
   }
 
   addModule(name) {
