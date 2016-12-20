@@ -92,7 +92,9 @@ class ImagePopup {
 			if (rdURL.checked){
 				this.addFromURL(txtURL.value);
 			} else {
-				this.addFromFile(inputFile);
+				if (inputFile.files != null && inputFile.files[0] != null) {
+					this.addFromFile(inputFile.files[0]);
+				}
 			}
 		};
 		divSectionButton.appendChild(btnInsert);
@@ -118,24 +120,22 @@ class ImagePopup {
 		this.quill.insertEmbed(selection.index, 'image', url);
 		this.hide();
 	}
-	addFromFile(inputFile){
-		if (inputFile.files != null && inputFile.files[0] != null) {
-			this.form.style.display = "none";
-			this.progressSection.style.display = "block";
+	addFromFile(imageFile){
+		this.form.style.display = "none";
+		this.progressSection.style.display = "block";
 
-			var ImageUpload = this.quill.getModule("image-upload");
-			ImageUpload.upload(inputFile, (error) => {
-				if (error){
-					alert(error);
-				}
-				this.hide();
-			}, (progress) => {
-				this.progressBar.style.width = progress * 100 + "%";
-				this.progressBar.innerHTML = Math.round(progress * 100) + "%";
-			});
-			this.progressBar.innerHTML = "0%";
-    	}
-    }
+		var ImageUpload = this.quill.getModule("image-upload");
+		ImageUpload.upload(imageFile, (error) => {
+			if (error){
+				alert(error);
+			}
+			this.hide();
+		}, (progress) => {
+			this.progressBar.style.width = progress * 100 + "%";
+			this.progressBar.innerHTML = Math.round(progress * 100) + "%";
+		});
+		this.progressBar.innerHTML = "0%";
+	}  
     show(){
     	document.body.appendChild(this.divPopup);
 		this.txtURL.focus();

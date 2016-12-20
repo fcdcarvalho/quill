@@ -7,9 +7,8 @@ class ImageUpload extends Module {
 	constructor(quill, options){
 		super(quill, options);
 	}
-	upload(image_input, done_callback, progress_callback){
+	upload(image_file, done_callback, progress_callback){
 		var key = prompt("upload key"); // TODO insert server upload key
-		var image_file = image_input.files[0]; 
 		var name = image_file.name;
 
 		var fileReader = new FileReader();
