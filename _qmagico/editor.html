@@ -1,26 +1,37 @@
-<link rel="stylesheet" type="text/css" href="../dist/quill.snow.css">
-<script type="text/javascript" src="../dist/quill.js"></script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css" rel="stylesheet">
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="../dist/quill.snow.css">
+		<script type="text/javascript" src="../dist/quill.js"></script>
 
-<div id="quill"></div>
+		<div id="quill"></div>
 
-<script>
+		<script>
 
-var quill = new Quill ("#quill",{
-	theme: "snow",
-	modules: {
-		toolbar:[
-			['bold', 'italic', 'underline'],
-			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-			[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-			[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-			[{'size-pt':[]}], // custom dropdown
-			[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-			[{ 'align': [] }],
-			['link', "image", 'video', 'formula'],
-			['clean']
-		],
-		"image-upload": {}
-	}
-});
+			var quill = new Quill ("#quill",{
+				theme: "snow",
+				modules: {
+					formula: true,
+					toolbar:[
+						['bold', 'italic', 'underline'],
+						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+						[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+						[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+						[{'size-pt':[]}], // custom dropdown
+						[{'size':[]}], 
+						[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+						[{ 'align': [] }],
+						['link', "image", 'video', 'formula'],
+						['clean']
+					],
+					"image-upload": {}
+				}
+			});
 
-</script>
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
