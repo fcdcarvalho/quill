@@ -15,6 +15,9 @@ import ImagePopup from '../ui/image-popup';
 
 let debug = logger('quill:clipboard');
 
+
+const DOM_KEY = '__ql-matcher';
+
 const CLIPBOARD_CONFIG = [
   [Node.TEXT_NODE, matchText],
   ['br', matchBreak],
@@ -67,52 +70,11 @@ class Clipboard extends Module {
   }
 
   convert(html) {
-    const DOM_KEY = '__ql-matcher';
     if (typeof html === 'string') {
       this.container.innerHTML = html;
     }
-    let textMatchers = [], elementMatchers = [];
-    this.matchers.forEach((pair) => {
-      let [selector, matcher] = pair;
-      switch (selector) {
-        case Node.TEXT_NODE:
-          textMatchers.push(matcher);
-          break;
-        case Node.ELEMENT_NODE:
-          elementMatchers.push(matcher);
-          break;
-        default:
-          [].forEach.call(this.container.querySelectorAll(selector), (node) => {
-            // TODO use weakmap
-            node[DOM_KEY] = node[DOM_KEY] || [];
-            node[DOM_KEY].push(matcher);
-          });
-          break;
-      }
-    });
-    let traverse = (node) => {  // Post-order
-      if (node.nodeType === node.TEXT_NODE) {
-        return textMatchers.reduce(function(delta, matcher) {
-          return matcher(node, delta);
-        }, new Delta());
-      } else if (node.nodeType === node.ELEMENT_NODE) {
-        return [].reduce.call(node.childNodes || [], (delta, childNode) => {
-          let childrenDelta = traverse(childNode);
-          if (childNode.nodeType === node.ELEMENT_NODE) {
-            childrenDelta = elementMatchers.reduce(function(childrenDelta, matcher) {
-              return matcher(childNode, childrenDelta);
-            }, childrenDelta);
-            childrenDelta = (childNode[DOM_KEY] || []).reduce(function(childrenDelta, matcher) {
-              return matcher(childNode, childrenDelta);
-            }, childrenDelta);
-          }
-          return delta.concat(childrenDelta);
-        }, new Delta());
-      } else {
-        return new Delta();
-      }
-    };
-    let delta = traverse(this.container);
+    let [elementMatchers, textMatchers] = this.prepareMatching();
+    let delta = traverse(this.container, elementMatchers, textMatchers);
     // Remove trailing newline
     if (deltaEndsWith(delta, '\n') && delta.ops[delta.ops.length - 1].attributes == null) {
       delta = delta.compose(new Delta().retain(delta.length() - 1).delete(1));
@@ -134,6 +96,7 @@ class Clipboard extends Module {
   onPaste(e) {
     if (e.defaultPrevented) return;
     let range = this.quill.getSelection();
+/*<<<<<<< HEAD*/
     let items = (e.clipboardData  || e.originalEvent.clipboardData).items;
     let image = null;
     for (var i = 0; i < items.length; i++) {
@@ -157,6 +120,43 @@ class Clipboard extends Module {
         this.quill.selection.scrollIntoView();
       }, 1);
     }
+/*=======
+    let delta = new Delta().retain(range.index);
+    let scrollTop = this.quill.scrollingContainer.scrollTop;
+    this.container.focus();
+    setTimeout(() => {
+      this.quill.selection.update(Quill.sources.SILENT);
+      delta = delta.concat(this.convert()).delete(range.length);
+      this.quill.updateContents(delta, Quill.sources.USER);
+      // range.length contributes to delta.length()
+      this.quill.setSelection(delta.length() - range.length, Quill.sources.SILENT);
+      this.quill.scrollingContainer.scrollTop = scrollTop;
+      this.quill.selection.scrollIntoView();
+    }, 1);
+>>>>>>> eae0499e78aa3993bef3e1123e8dd0e0fc3de638*/
+  }
+
+  prepareMatching() {
+    let elementMatchers = [], textMatchers = [];
+    this.matchers.forEach((pair) => {
+      let [selector, matcher] = pair;
+      switch (selector) {
+        case Node.TEXT_NODE:
+          textMatchers.push(matcher);
+          break;
+        case Node.ELEMENT_NODE:
+          elementMatchers.push(matcher);
+          break;
+        default:
+          [].forEach.call(this.container.querySelectorAll(selector), (node) => {
+            // TODO use weakmap
+            node[DOM_KEY] = node[DOM_KEY] || [];
+            node[DOM_KEY].push(matcher);
+          });
+          break;
+      }
+    });
+    return [elementMatchers, textMatchers];
   }
 }
 Clipboard.DEFAULTS = {
@@ -186,6 +186,30 @@ function isLine(node) {
   return ['block', 'list-item'].indexOf(style.display) > -1;
 }
 
+function traverse(node, elementMatchers, textMatchers) {  // Post-order
+  if (node.nodeType === node.TEXT_NODE) {
+    return textMatchers.reduce(function(delta, matcher) {
+      return matcher(node, delta);
+    }, new Delta());
+  } else if (node.nodeType === node.ELEMENT_NODE) {
+    return [].reduce.call(node.childNodes || [], (delta, childNode) => {
+      let childrenDelta = traverse(childNode, elementMatchers, textMatchers);
+      if (childNode.nodeType === node.ELEMENT_NODE) {
+        childrenDelta = elementMatchers.reduce(function(childrenDelta, matcher) {
+          return matcher(childNode, childrenDelta);
+        }, childrenDelta);
+        childrenDelta = (childNode[DOM_KEY] || []).reduce(function(childrenDelta, matcher) {
+          return matcher(childNode, childrenDelta);
+        }, childrenDelta);
+      }
+      return delta.concat(childrenDelta);
+    }, new Delta());
+  } else {
+    return new Delta();
+  }
+}
+
+
 function matchAlias(format, node, delta) {
   return delta.compose(new Delta().retain(delta.length(), { [format]: true }));
 }
@@ -203,11 +227,11 @@ function matchAttributor(node, delta) {
     }
     if (ATTRIBUTE_ATTRIBUTORS[name] != null) {
       attr = ATTRIBUTE_ATTRIBUTORS[name];
-      formats[attr.attrName] = attr.value(node);
+      formats[attr.attrName] = attr.value(node) || undefined;
     }
     if (STYLE_ATTRIBUTORS[name] != null) {
       attr = STYLE_ATTRIBUTORS[name];
-      formats[attr.attrName] = attr.value(node);
+      formats[attr.attrName] = attr.value(node) || undefined;
     }
   });
   if (Object.keys(formats).length > 0) {
@@ -264,6 +288,9 @@ function matchSpacing(node, delta) {
 function matchStyles(node, delta) {
   let formats = {};
   let style = node.style || {};
+  if (style.fontStyle && computeStyle(node).fontStyle === 'italic') {
+    formats.italic = true;
+  }
   if (style.fontWeight && computeStyle(node).fontWeight === 'bold') {
     formats.bold = true;
   }
