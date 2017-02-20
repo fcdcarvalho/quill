@@ -89,6 +89,7 @@ class ImageResizer {
             if (resizing && this.image) {
                 let pageX, pageY;
                 if (e.touches && e.touches[0]) {
+                    e.preventDefault();
                     pageX = e.touches[0].pageX;
                     pageY = e.touches[0].pageY;
                 } else {
