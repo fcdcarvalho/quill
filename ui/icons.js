@@ -23,6 +23,7 @@ module.exports = {
     'right'   : require('../assets/icons/float-right.svg')
   },
   'formula'   : require('../assets/icons/formula.svg'),
+  'formula-labmath'   : require('../assets/icons/formula-labmath.svg'),
   'header': {
     '1'       : require('../assets/icons/header.svg'),
     '2'       : require('../assets/icons/header-2.svg')

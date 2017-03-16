@@ -27,6 +27,7 @@ import Video from './formats/video';
 import CodeBlock, { Code as InlineCode } from './formats/code';
 
 import Formula from './modules/formula';
+import FormulaLabmath from './modules/formula-labmath';
 import Syntax from './modules/syntax';
 import Toolbar from './modules/toolbar';
 import ImageUpload from './modules/image-upload';
@@ -92,6 +93,7 @@ Quill.register({
   'formats/list/item': ListItem,
 
   'modules/formula': Formula,
+  'modules/formula-labmath': FormulaLabmath,
   'modules/syntax': Syntax,
   'modules/toolbar': Toolbar,
   'modules/image-upload': ImageUpload,
@@ -106,6 +108,5 @@ Quill.register({
   'ui/tooltip': Tooltip,
   'ui/image-popup': ImagePopup
 }, true);
-
 
 module.exports = Quill;

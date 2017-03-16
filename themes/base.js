@@ -145,6 +145,12 @@ BaseTheme.DEFAULTS = extend(true, {}, Theme.DEFAULTS, {
         formula: function() {
           this.quill.theme.tooltip.edit('formula');
         },
+        'formula-labmath': function() {
+          let range = this.quill.getSelection(true);
+          let index = range.index + range.length;
+          this.quill.insertEmbed(index, 'formula-labmath', '', Emitter.sources.USER);
+          
+        },
         image: function(value) {
           var imagePopup = new ImagePopup(this.quill);
         },
