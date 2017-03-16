@@ -29,6 +29,9 @@ colorItemsPerRow = 7
       float: left
       height: 100%
 
+    &:active:hover
+      outline: none
+
   input.ql-image[type=file]
     display: none
 
@@ -54,9 +57,12 @@ colorItemsPerRow = 7
 
   .ql-tooltip
     position: absolute
+    transform: translateY(10px)
     a
       cursor: pointer
       text-decoration: none
+  .ql-tooltip.ql-flip
+    transform: translateY(-10px)
 
   .ql-formats
     &:after
@@ -386,8 +392,8 @@ colorItemsPerRow = 7
       position: absolute
       background-color: #FFF
       border: 1px solid #000
-      width: 8px
-      height: 8px
+      width: 16px
+      height: 16px
       pointer-events: auto
 
     .ql-top-left
